@@ -58,6 +58,8 @@ npm start
 - Player movement
 - Multiplayer interactions
 - Connection handling
+- Automated screenshot capture for visual verification
+- Screenshots saved to `screenshots/` directory (gitignored)
 
 ## How to Play
 

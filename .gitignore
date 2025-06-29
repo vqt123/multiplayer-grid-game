@@ -68,6 +68,7 @@ client.log
 test-results/
 playwright-report/
 coverage/
+screenshots/
 
 # IDE
 .vscode/

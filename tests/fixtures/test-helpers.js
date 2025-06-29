@@ -1,4 +1,6 @@
 const { test as base } = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
 
 // Create custom test fixture with game-specific helpers
 exports.test = base.extend({
@@ -41,9 +43,33 @@ exports.test = base.extend({
 
   // Helper to get canvas screenshot
   canvasScreenshot: async ({ page }, use) => {
-    await use(async () => {
+    await use(async (filename = null) => {
       const canvas = await page.locator('#gameCanvas');
-      return await canvas.screenshot();
+      const screenshot = await canvas.screenshot();
+      
+      if (filename) {
+        const screenshotDir = path.join(__dirname, '../../screenshots');
+        if (!fs.existsSync(screenshotDir)) {
+          fs.mkdirSync(screenshotDir, { recursive: true });
+        }
+        const filepath = path.join(screenshotDir, filename);
+        fs.writeFileSync(filepath, screenshot);
+      }
+      
+      return screenshot;
+    });
+  },
+
+  // Helper to take full page screenshot  
+  takeScreenshot: async ({ page }, use) => {
+    await use(async (filename) => {
+      const screenshotDir = path.join(__dirname, '../../screenshots');
+      if (!fs.existsSync(screenshotDir)) {
+        fs.mkdirSync(screenshotDir, { recursive: true });
+      }
+      const filepath = path.join(screenshotDir, filename);
+      await page.screenshot({ path: filepath, fullPage: true });
+      return filepath;
     });
   },
 

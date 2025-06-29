@@ -1,8 +1,11 @@
 const { test, expect } = require('../fixtures/test-helpers');
 
 test.describe('Game Functionality', () => {
-  test('should load game page with join form', async ({ page }) => {
+  test('should load game page with join form', async ({ page, takeScreenshot }) => {
     await page.goto('/');
+    
+    // Take screenshot of initial page
+    await takeScreenshot('01-initial-page.png');
     
     // Check page title
     await expect(page).toHaveTitle('Multiplayer Grid Game');
@@ -16,8 +19,11 @@ test.describe('Game Functionality', () => {
     await expect(page.locator('#gameCanvas')).toBeHidden();
   });
 
-  test('should join game and display canvas', async ({ gamePage, joinGame }) => {
+  test('should join game and display canvas', async ({ gamePage, joinGame, takeScreenshot }) => {
     await joinGame('Player1');
+    
+    // Take screenshot after joining
+    await takeScreenshot('02-joined-game.png');
     
     // Check canvas is visible
     await expect(gamePage.locator('#gameCanvas')).toBeVisible();
@@ -35,8 +41,8 @@ test.describe('Game Functionality', () => {
   test('should render grid on canvas', async ({ gamePage, joinGame, canvasScreenshot }) => {
     await joinGame();
     
-    // Take screenshot of canvas
-    const screenshot = await canvasScreenshot();
+    // Take screenshot of canvas with grid
+    const screenshot = await canvasScreenshot('03-grid-canvas.png');
     
     // Canvas should have content (not empty)
     expect(screenshot).toBeTruthy();
@@ -48,11 +54,14 @@ test.describe('Game Functionality', () => {
     expect(box.height).toBe(600);
   });
 
-  test('should display player on grid after joining', async ({ gamePage, joinGame, getPlayerCount }) => {
+  test('should display player on grid after joining', async ({ gamePage, joinGame, getPlayerCount, canvasScreenshot }) => {
     await joinGame('TestPlayer');
     
     // Wait for player to be added
     await gamePage.waitForTimeout(500);
+    
+    // Take screenshot with player visible
+    await canvasScreenshot('04-player-on-grid.png');
     
     // Check player count
     const count = await getPlayerCount();
@@ -64,15 +73,18 @@ test.describe('Game Functionality', () => {
     expect(screenshot).toBeTruthy();
   });
 
-  test('should move player with arrow keys', async ({ gamePage, joinGame, pressArrowKey }) => {
+  test('should move player with arrow keys', async ({ gamePage, joinGame, pressArrowKey, canvasScreenshot }) => {
     await joinGame('Mover');
     
     // Wait for initial render
     await gamePage.waitForTimeout(500);
     
+    // Take screenshot before movement
+    await canvasScreenshot('05-before-movement.png');
+    
     // Get initial player position
     const initialPos = await gamePage.evaluate(() => {
-      const player = Array.from(window.players.values())[0];
+      const player = Array.from(window.clientState.players.values())[0];
       return player ? { x: player.x, y: player.y } : null;
     });
     
@@ -82,9 +94,12 @@ test.describe('Game Functionality', () => {
     await pressArrowKey('right');
     await gamePage.waitForTimeout(200);
     
+    // Take screenshot after movement
+    await canvasScreenshot('06-after-movement.png');
+    
     // Check position changed
     const newPos = await gamePage.evaluate(() => {
-      const player = Array.from(window.players.values())[0];
+      const player = Array.from(window.clientState.players.values())[0];
       return player ? { x: player.x, y: player.y } : null;
     });
     
@@ -92,7 +107,7 @@ test.describe('Game Functionality', () => {
     expect(newPos.y).toBe(initialPos.y);
   });
 
-  test('should respect grid boundaries', async ({ gamePage, joinGame, pressArrowKey }) => {
+  test('should respect grid boundaries', async ({ gamePage, joinGame, pressArrowKey, canvasScreenshot }) => {
     await joinGame('BoundaryTester');
     await gamePage.waitForTimeout(500);
     
@@ -104,9 +119,12 @@ test.describe('Game Functionality', () => {
     
     await gamePage.waitForTimeout(500);
     
+    // Take screenshot at boundary
+    await canvasScreenshot('07-boundary-test.png');
+    
     // Get position - should be at (0, 0)
     const cornerPos = await gamePage.evaluate(() => {
-      const player = Array.from(window.players.values())[0];
+      const player = Array.from(window.clientState.players.values())[0];
       return player ? { x: player.x, y: player.y } : null;
     });
     
@@ -120,7 +138,7 @@ test.describe('Game Functionality', () => {
     
     // Position should still be (0, 0)
     const stillCornerPos = await gamePage.evaluate(() => {
-      const player = Array.from(window.players.values())[0];
+      const player = Array.from(window.clientState.players.values())[0];
       return player ? { x: player.x, y: player.y } : null;
     });
     

@@ -47,19 +47,29 @@ test.describe('Multiplayer Functionality', () => {
     await page1.waitForTimeout(1000);
     await page2.waitForTimeout(1000);
     
+    // Take screenshots from both players' perspectives
+    await page1.screenshot({ 
+      path: 'screenshots/08-multiplayer-player1-view.png',
+      fullPage: true 
+    });
+    await page2.screenshot({ 
+      path: 'screenshots/09-multiplayer-player2-view.png',
+      fullPage: true 
+    });
+    
     // Check player count on both pages
-    const player1Count = await page1.evaluate(() => window.players?.size || 0);
-    const player2Count = await page2.evaluate(() => window.players?.size || 0);
+    const player1Count = await page1.evaluate(() => window.clientState?.players?.size || 0);
+    const player2Count = await page2.evaluate(() => window.clientState?.players?.size || 0);
     
     expect(player1Count).toBe(2);
     expect(player2Count).toBe(2);
     
     // Verify both players see each other's names
     const player1Names = await page1.evaluate(() => 
-      Array.from(window.players?.values() || []).map(p => p.name).sort()
+      Array.from(window.clientState?.players?.values() || []).map(p => p.name).sort()
     );
     const player2Names = await page2.evaluate(() => 
-      Array.from(window.players?.values() || []).map(p => p.name).sort()
+      Array.from(window.clientState?.players?.values() || []).map(p => p.name).sort()
     );
     
     expect(player1Names).toEqual(['Player1', 'Player2']);
@@ -80,15 +90,21 @@ test.describe('Multiplayer Functionality', () => {
     
     await page1.waitForTimeout(1000);
     
+    // Take screenshot before movement
+    await page2.screenshot({ 
+      path: 'screenshots/10-before-player-movement.png',
+      fullPage: true 
+    });
+    
     // Get Mover's initial position as seen by Observer
     const moverIdOnObserver = await page2.evaluate(() => {
-      const players = Array.from(window.players?.values() || []);
+      const players = Array.from(window.clientState?.players?.values() || []);
       const mover = players.find(p => p.name === 'Mover');
       return mover?.id;
     });
     
     const initialPos = await page2.evaluate((id) => {
-      const player = window.players?.get(id);
+      const player = window.clientState?.players?.get(id);
       return player ? { x: player.x, y: player.y } : null;
     }, moverIdOnObserver);
     
@@ -98,9 +114,15 @@ test.describe('Multiplayer Functionality', () => {
     await page1.keyboard.press('ArrowRight');
     await page1.waitForTimeout(500);
     
+    // Take screenshot after movement from Observer's view
+    await page2.screenshot({ 
+      path: 'screenshots/11-after-player-movement.png',
+      fullPage: true 
+    });
+    
     // Check Observer sees the movement
     const newPos = await page2.evaluate((id) => {
-      const player = window.players?.get(id);
+      const player = window.clientState?.players?.get(id);
       return player ? { x: player.x, y: player.y } : null;
     }, moverIdOnObserver);
     
