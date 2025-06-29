@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Grid Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #gameContainer {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+
+        #joinForm {
+            margin-bottom: 20px;
+        }
+
+        #joinForm input {
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #joinForm button {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #4ECDC4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #joinForm button:hover {
+            background-color: #3CBBB2;
+        }
+
+        #gameCanvas {
+            border: 2px solid #333;
+            display: none;
+        }
+
+        #status {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        #instructions {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+            display: none;
+        }
+
+        .error {
+            color: #FF6B6B;
+        }
+
+        .connected {
+            color: #4ECDC4;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <h1>Multiplayer Grid Game</h1>
+        
+        <div id="joinForm">
+            <input type="text" id="playerName" placeholder="Enter your name" maxlength="20">
+            <button onclick="joinGame()">Join Game</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="status">Not connected</div>
+        
+        <div id="instructions">
+            <h3>How to Play</h3>
+            <p>Use arrow keys to move your character</p>
+            <p>↑ ↓ ← → to move around the grid</p>
+        </div>
+    </div>
+
+    <script>
+        // Constants are defined inline for the browser
+        const GRID_SIZE = 20;
+        const CELL_SIZE = 30;
+        const CANVAS_SIZE = GRID_SIZE * CELL_SIZE;
+        const SERVER_PORT = 3000;
+
+        const MESSAGES = {
+            JOIN: 'join',
+            MOVE: 'move',
+            PLAYER_JOINED: 'playerJoined',
+            PLAYER_MOVED: 'playerMoved',
+            PLAYER_LEFT: 'playerLeft',
+            GAME_STATE: 'gameState'
+        };
+    </script>
+    <script src="renderer.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
