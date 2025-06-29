@@ -46,16 +46,19 @@ Document and implement a Multi-User 2D Grid Client-Server Project Plan with the 
 - Jest unit tests for server logic (Player class, Game class)
 - Jest unit tests for client logic (connection, rendering)
 - Playwright E2E tests for full user workflows
-- Cross-browser testing (Chrome, Firefox, Safari)
+- Chromium-only testing (avoid webkit dependencies in WSL)
+- Sequential test execution (fullyParallel: false, workers: 1)
 - Automated screenshot capture during E2E tests
 - Install chromium: npx playwright install chromium
 - Use simple require() syntax in test fixtures, avoid destructuring with 'as'
+- Use basic functions instead of complex Playwright fixtures
 
 **Development Setup:**
 - package.json with all dependencies and scripts
 - Server management scripts (start, stop, restart)
 - Git repository with proper .gitignore
 - Comprehensive project documentation
+- CLAUDE.md file with critical instructions (CREATE THIS FIRST)
 
 document this plan then start it.
 ```
@@ -197,66 +200,37 @@ If players connect but don't appear on grid:
 - Client state: Ensure clientState.players Map is updated correctly
 - Constants path: Copy shared/constants.js to client/constants.js for HTTP server access
 - Playwright fixtures: Use simple require() syntax, avoid destructuring with 'as' keyword
+- Jest config: Avoid syntax errors like moduleNameMapping typos
+- Canvas mocking: Use proper getter/setter patterns for fillStyle properties
+- Test execution: Use sequential execution to avoid cross-test interference
 ```
 
 ## Step-by-Step Follow-up Instructions
 
 After giving Claude Code the initial prompt, use these follow-up commands in order:
 
-1. **"go ahead and try to install run the game and test it yourself"**
-   - This will trigger the full implementation
-
-2. **Create server management scripts:**
+1. **Create CLAUDE.md file FIRST:**
    ```
-   create scripts which kill existing clients and servers and restarts them. have them run in the background and terminate immediately. memorize that you should always use those commands whenever you need to start or stop a server. memorize that no other instructions should go above these instructions
+   create a CLAUDE.md file with critical instructions for server management and common troubleshooting steps, especially for the player rendering issue where players connect but don't appear on the grid. This file should contain all the essential instructions you'll need to reference throughout development.
    ```
 
-3. **Set up version control:**
+2. **Begin full implementation:**
    ```
-   create a gitignore and commit this with github cli
-   ```
-
-4. **Fix constants path and copy file:**
-   ```
-   copy shared/constants.js to client/constants.js and update the HTML script tag to use "constants.js" instead of "../shared/constants.js"
+   go ahead and create the complete project structure, implement all components, install dependencies, and test the implementation. use a todo list to track progress and reference the CLAUDE.md file for any critical instructions during implementation
    ```
 
-5. **Install Playwright chromium:**
+3. **Commit the working project:**
    ```
-   run npx playwright install chromium to ensure screenshots will work
+   create a gitignore and commit the project with git
    ```
-
-6. **Test the implementation:**
-   ```
-   go ahead and try to run the game and test it yourself now
-   ```
-
-7. **Add screenshot functionality:**
-   ```
-   update tests to take screenshots and place them in a gitignored screenshots directory. use simple require() syntax in test fixtures, avoid destructuring with 'as' keyword
-   ```
-
-8. **Fix any test issues:**
-   ```
-   why are the client tests failing. find root cause and fix them if they are real issues
-   ```
-
-9. **Add verbose logging:**
-   ```
-   e2e tests take a while, can we output something to the logs while that test runs so we can tell that things are still running
-   ```
-
-10. **Create CLAUDE.md file:**
-    ```
-    create a CLAUDE.md file with critical instructions for server management and common troubleshooting steps, especially for the player rendering issue where players connect but don't appear on the grid
-    ```
 
 ## Expected Test Results
 
-- **Unit Tests:** tests should pass (Player, Game, Client, Renderer)
-- **E2E Tests:** Should run across Chrome and Firefox browsers
-- **Screenshots:** Auto-generated during E2E test execution
-- **Logs:** Verbose progress indicators during test runs
+- **Unit Tests:** All tests should pass (Player, Game, Client, Renderer) after fixing canvas mocking and Jest config
+- **E2E Tests:** Should run on Chromium browser with sequential execution
+- **Screenshots:** 15+ screenshots automatically generated showing game functionality
+- **Logs:** Console output shows test progress and connection status
+- **Game Demo:** Working game accessible at localhost:8080 with visible players on grid
 
 ## Game Features to Verify
 

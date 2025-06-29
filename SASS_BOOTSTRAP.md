@@ -7,10 +7,10 @@ This document provides proven patterns for initializing Claude Code agents for S
 Based on successful project patterns, effective Claude Code initialization follows these principles:
 
 1. **Comprehensive Initial Prompt** - Provide complete specifications upfront
-2. **Proactive Issue Prevention** - Address known issues in initial instructions
-3. **Structured Follow-up Commands** - Use proven command sequences
-4. **Testing-First Approach** - Build comprehensive test suites from the start
-5. **Agent Memory Management** - Create CLAUDE.md files for persistent instructions
+2. **Agent Memory First** - Create CLAUDE.md files IMMEDIATELY for persistent instructions
+3. **Proactive Issue Prevention** - Address known issues in initial instructions and CLAUDE.md
+4. **Structured Follow-up Commands** - Use proven command sequences with CLAUDE.md reference
+5. **Testing-First Approach** - Build comprehensive test suites from the start
 
 ## Universal SASS Project Template
 
@@ -47,13 +47,15 @@ Document and implement a [PROJECT_TYPE] with the following specifications:
 **Testing Requirements:**
 - Unit tests for all business logic
 - Integration tests for API endpoints
-- E2E tests for user workflows
+- E2E tests for user workflows (sequential execution recommended)
 - Database testing with test fixtures
 - Authentication flow testing
 - Error handling and edge case testing
 - Performance testing for key operations
 - Install test dependencies upfront
 - Use simple require() syntax, avoid complex destructuring
+- Chromium-only for E2E tests (avoid webkit dependencies)
+- Use basic helper functions instead of complex test fixtures
 
 **Development Setup:**
 - package.json with all dependencies and scripts
@@ -82,52 +84,57 @@ document this plan then start it.
 
 After the initial implementation, use these commands in order:
 
-### 1. Core Setup and Dependency Management
+### 1. Create CLAUDE.md File FIRST
 ```
-install all dependencies and set up the development environment. create any necessary configuration files and ensure all tools are properly configured
+create a CLAUDE.md file with critical instructions for development, server management, testing commands, and common troubleshooting steps. This file should contain all essential instructions you'll reference throughout development
 ```
 
-### 2. Database and Authentication Setup
+### 2. Core Setup and Dependency Management
+```
+install all dependencies and set up the development environment. create any necessary configuration files and ensure all tools are properly configured. reference the CLAUDE.md file for any critical instructions
+```
+
+### 3. Database and Authentication Setup
 ```
 set up the database schema, create migration files, and implement the authentication system with proper security measures
 ```
 
-### 3. API Development and Validation
+### 4. API Development and Validation
 ```
 implement all API endpoints with proper validation, error handling, and security measures. include comprehensive input sanitization
 ```
 
-### 4. Frontend Implementation
+### 5. Frontend Implementation
 ```
 create the frontend interface with proper state management, API integration, and responsive design. ensure good user experience
 ```
 
-### 5. Testing Infrastructure
+### 6. Testing Infrastructure
 ```
-create comprehensive test suites including unit tests, integration tests, and E2E tests. install all test dependencies and configure test environments properly
+create comprehensive test suites including unit tests, integration tests, and E2E tests. install all test dependencies and configure test environments properly. use sequential test execution and chromium-only for E2E tests. use simple helper functions instead of complex Playwright fixtures
 ```
 
-### 6. Development Scripts and Automation
+### 7. Development Scripts and Automation
 ```
 create development scripts for starting/stopping services, running tests, and managing the development workflow. include hot reload and watch modes
 ```
 
-### 7. Error Handling and Edge Cases
+### 8. Error Handling and Edge Cases
 ```
 implement comprehensive error handling, input validation, and edge case management throughout the application
 ```
 
-### 8. Documentation and Project Structure
+### 9. Documentation and Project Structure
 ```
-create comprehensive documentation including API documentation, setup instructions, and a CLAUDE.md file with critical development instructions
+create comprehensive documentation including API documentation and setup instructions. update the CLAUDE.md file with any additional critical development instructions discovered during implementation
 ```
 
-### 9. Production Preparation
+### 10. Production Preparation
 ```
 set up production build processes, environment configuration, and deployment preparation including security hardening
 ```
 
-### 10. Final Testing and Verification
+### 11. Final Testing and Verification
 ```
 run all tests, verify all functionality works correctly, and ensure the application is ready for development or deployment
 ```
@@ -184,10 +191,11 @@ describe('API Integration Tests', () => {
 module.exports = {
   testDir: './tests/e2e',
   timeout: 30000,
-  fullyParallel: true,
+  fullyParallel: false,  // Sequential execution prevents cross-test interference
+  workers: 1,            // Single worker for reliable test execution
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } }
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
+    // Chromium-only to avoid webkit dependency issues in WSL
   ],
   webServer: {
     command: 'npm run serve',
@@ -239,6 +247,10 @@ module.exports = {
 - Authentication: Check JWT secret and expiration
 - File uploads: Validate file types and sizes
 - Rate limiting: Adjust limits for development vs production
+- Jest config: Avoid syntax errors in module configuration
+- Playwright fixtures: Use simple functions instead of complex extensions
+- Test isolation: Use sequential execution to prevent cross-test interference
+- Canvas mocking: Implement proper getter/setter patterns for context properties
 
 ## Deployment Checklist
 - [ ] All tests passing
@@ -406,11 +418,23 @@ A successfully initialized SASS project should achieve:
 
 ## Common Pitfalls to Avoid
 
-1. **Incomplete Initial Specifications**: Leads to multiple clarification rounds
-2. **Missing Test Dependencies**: Causes test setup failures later
-3. **Weak Error Handling**: Results in poor user experience
-4. **Security Afterthoughts**: Creates vulnerabilities
-5. **Poor State Management**: Causes debugging difficulties
-6. **Missing Documentation**: Slows down development iterations
+1. **Creating CLAUDE.md Last**: Leads to repeated issues that could be prevented upfront
+2. **Incomplete Initial Specifications**: Leads to multiple clarification rounds
+3. **Missing Test Dependencies**: Causes test setup failures later
+4. **Weak Error Handling**: Results in poor user experience
+5. **Security Afterthoughts**: Creates vulnerabilities
+6. **Poor State Management**: Causes debugging difficulties
+7. **Missing Documentation**: Slows down development iterations
+
+## Key Learning: CLAUDE.md First Strategy
+
+**Critical Discovery**: Creating CLAUDE.md as the first step (not last) dramatically reduces development issues. When Claude Code has access to critical instructions from the beginning, it can:
+
+- Avoid common implementation pitfalls
+- Use correct patterns from the start
+- Reference troubleshooting steps proactively
+- Follow established conventions consistently
+
+This "Agent Memory First" approach transforms Claude Code from reactive debugging to proactive implementation.
 
 This bootstrap guide provides the foundation for creating robust, well-tested SASS applications using Claude Code with minimal iteration and maximum efficiency.
