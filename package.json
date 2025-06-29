@@ -9,6 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
+    "test:e2e:verbose": "./run-e2e-verbose.sh",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm test && npm run test:e2e",
     "serve": "concurrently \"npm run dev\" \"npx http-server client -p 8080\"",

@@ -31,23 +31,25 @@ test.describe('Multiplayer Functionality', () => {
   });
 
   test('should show multiple players on the grid', async () => {
-    // Player 1 joins
+    console.log('🔄 Starting: Multiplayer visibility test');
+    
+    console.log('👤 Player 1 joining...');
     await page1.goto('/');
     await page1.fill('#playerName', 'Player1');
     await page1.click('button:has-text("Join Game")');
     await page1.waitForSelector('#gameCanvas', { state: 'visible' });
     
-    // Player 2 joins
+    console.log('👤 Player 2 joining...');
     await page2.goto('/');
     await page2.fill('#playerName', 'Player2');
     await page2.click('button:has-text("Join Game")');
     await page2.waitForSelector('#gameCanvas', { state: 'visible' });
     
-    // Wait for players to sync
+    console.log('⏳ Waiting for players to sync...');
     await page1.waitForTimeout(1000);
     await page2.waitForTimeout(1000);
     
-    // Take screenshots from both players' perspectives
+    console.log('📸 Taking multiplayer screenshots...');
     await page1.screenshot({ 
       path: 'screenshots/08-multiplayer-player1-view.png',
       fullPage: true 
@@ -57,14 +59,15 @@ test.describe('Multiplayer Functionality', () => {
       fullPage: true 
     });
     
-    // Check player count on both pages
+    console.log('🔢 Checking player counts...');
     const player1Count = await page1.evaluate(() => window.clientState?.players?.size || 0);
     const player2Count = await page2.evaluate(() => window.clientState?.players?.size || 0);
     
+    console.log(`👥 Player1 sees: ${player1Count} players, Player2 sees: ${player2Count} players`);
     expect(player1Count).toBe(2);
     expect(player2Count).toBe(2);
     
-    // Verify both players see each other's names
+    console.log('📝 Verifying player names...');
     const player1Names = await page1.evaluate(() => 
       Array.from(window.clientState?.players?.values() || []).map(p => p.name).sort()
     );
@@ -72,8 +75,11 @@ test.describe('Multiplayer Functionality', () => {
       Array.from(window.clientState?.players?.values() || []).map(p => p.name).sort()
     );
     
+    console.log(`👤 Player1 sees names: [${player1Names.join(', ')}]`);
+    console.log(`👤 Player2 sees names: [${player2Names.join(', ')}]`);
     expect(player1Names).toEqual(['Player1', 'Player2']);
     expect(player2Names).toEqual(['Player1', 'Player2']);
+    console.log('✅ Completed: Multiplayer visibility test');
   });
 
   test('should update other players when one moves', async () => {
